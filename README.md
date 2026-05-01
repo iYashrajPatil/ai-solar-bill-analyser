@@ -67,3 +67,79 @@ project/
 git clone https://github.com/iYashrajPatil/ai-solar-bill-analyser
 
 cd ai-solar-bill-analyzer
+```
+
+---
+
+### 2 Create virtual environment
+```
+python -m venv venv
+venv\Scripts\activate
+```
+---
+
+### 3 Install dependencies
+```
+pip install -r requirements.txt
+```
+
+---
+
+### 4 Install external tools
+
+#### Install Tesseract OCR
+- Download from official site
+- Set path in code
+
+#### Install Poppler
+- Required for PDF processing
+- Add poppler bin folder to system path
+
+---
+
+### 5 Setup environment variables
+
+Create `.env` file:
+GEMINI_API_KEY=your_api_key_here
+
+---
+
+### 6 Run the application
+```
+streamlit run app.py
+```
+
+---
+
+## Usage
+
+1 Upload electricity bill  
+2 Wait for processing  
+3 View extracted insights  
+4 Download solar report  
+
+---
+
+## Key Design Decisions
+
+- Used regex first for speed and reliability
+- Added AI fallback for robustness
+- Preserved Excel template to reuse formulas
+- Built minimal UI focused on usability
+
+---
+
+## Future Improvements
+
+- Improve OCR accuracy with preprocessing
+- Support multiple bill formats
+- Add solar recommendation logic directly in UI
+- Deploy as web application
+
+---
+
+## Author
+### Yashraj Patil
+
+Developed as part of AI engineering task focusing on real world document processing.
+
