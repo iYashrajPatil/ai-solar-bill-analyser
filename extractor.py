@@ -12,12 +12,10 @@ import json
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-
-# load environment variables for API keys
-load_dotenv()
+import streamlit as st
 
 # configure gemini model using API key
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # set local path of tesseract OCR engine
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
