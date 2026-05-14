@@ -12,20 +12,16 @@ import json
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-import streamlit as st
 
-# render already knows where tesseract is installed
-import platform
-
+# load environment variables for API keys
+load_dotenv()
 
 # configure gemini model using API key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # set local path of tesseract OCR engine
-if platform.system() == "Windows":
-    pytesseract.pytesseract.tesseract_cmd = (
-        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    )
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 def preprocess_image(img):
     """
@@ -57,22 +53,16 @@ def extract_text_from_file(uploaded_file):
 
         # run OCR on each page
         for img in images:
-             # resize image before OCR for faster processing
-             # large mobile screenshots slow down OCR heavily
-        
-            image.thumbnail((1200, 1200))
-
-            image = preprocess_image(image)
+            img = preprocess_image(img)
             text += pytesseract.image_to_string(img) + "\n"
 
     else:
         # if file is image directly apply OCR
         image = Image.open(uploaded_file)
-       
-        image.thumbnail((1200, 1200))
         image = preprocess_image(image)
         text = pytesseract.image_to_string(image)
-        return text
+
+    return text
 
 
 def extract_with_regex(text):
@@ -177,7 +167,6 @@ def extract_with_regex(text):
 
     return data
 
-@st.cache_data
 
 def extract_structured_data(text):
     """
@@ -190,16 +179,8 @@ def extract_structured_data(text):
 
     data = extract_with_regex(text)
 
-    # only use gemini if critical fields are missing
-
-    missing_fields = [
-        data.get("customer_name"),
-        data.get("consumer_number"),
-        data.get("billing_amount"),
-        data.get("units_consumed")
-    ]
-
-    if missing_fields.count(None) >= 2:
+    # if critical fields are missing we use AI model
+    if not data.get("units_consumed") or not data.get("billing_amount"):
 
         try:
             model = genai.GenerativeModel("gemini-pro")
@@ -219,14 +200,8 @@ def extract_structured_data(text):
             text
             {text}
             """
-            #Lower randomness improves response speed and consistency, which is important for data extraction tasks.
 
-            response = model.generate_content(
-                    prompt,
-                    generation_config={
-                        "temperature": 0
-                    }
-            )
+            response = model.generate_content(prompt)
 
             gemini_data = json.loads(response.text)
 
