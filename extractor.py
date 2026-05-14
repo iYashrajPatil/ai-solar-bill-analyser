@@ -57,16 +57,22 @@ def extract_text_from_file(uploaded_file):
 
         # run OCR on each page
         for img in images:
-            img = preprocess_image(img)
+             # resize image before OCR for faster processing
+             # large mobile screenshots slow down OCR heavily
+        
+            image.thumbnail((1200, 1200))
+
+            image = preprocess_image(image)
             text += pytesseract.image_to_string(img) + "\n"
 
     else:
         # if file is image directly apply OCR
         image = Image.open(uploaded_file)
+       
+        image.thumbnail((1200, 1200))
         image = preprocess_image(image)
         text = pytesseract.image_to_string(image)
-
-    return text
+        return text
 
 
 def extract_with_regex(text):
@@ -171,6 +177,7 @@ def extract_with_regex(text):
 
     return data
 
+@st.cache_data
 
 def extract_structured_data(text):
     """
@@ -183,8 +190,16 @@ def extract_structured_data(text):
 
     data = extract_with_regex(text)
 
-    # if critical fields are missing we use AI model
-    if not data.get("units_consumed") or not data.get("billing_amount"):
+    # only use gemini if critical fields are missing
+
+    missing_fields = [
+        data.get("customer_name"),
+        data.get("consumer_number"),
+        data.get("billing_amount"),
+        data.get("units_consumed")
+    ]
+
+    if missing_fields.count(None) >= 2:
 
         try:
             model = genai.GenerativeModel("gemini-pro")
@@ -204,8 +219,14 @@ def extract_structured_data(text):
             text
             {text}
             """
+            #Lower randomness improves response speed and consistency, which is important for data extraction tasks.
 
-            response = model.generate_content(prompt)
+            response = model.generate_content(
+                    prompt,
+                    generation_config={
+                        "temperature": 0
+                    }
+            )
 
             gemini_data = json.loads(response.text)
 

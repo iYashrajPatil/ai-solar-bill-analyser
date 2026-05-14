@@ -98,7 +98,7 @@ st.markdown("")
 st.markdown("## Upload Electricity Bill")
 
 uploaded_file = st.file_uploader(
-    "Supported formats PDF PNG JPG",
+    "Supported formats PDF,PNG,JPG (For faster processing upload cropped JPG bills instead of PDF) ",
     type=["pdf", "png", "jpg"]
 )
 
