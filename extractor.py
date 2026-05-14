@@ -23,7 +23,9 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # set local path of tesseract OCR engine
 if platform.system() == "Windows":
-    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract OCR\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = (
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
 
 def preprocess_image(img):
     """
