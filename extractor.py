@@ -12,15 +12,18 @@ import json
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-
+import platform
 # load environment variables for API keys
 load_dotenv()
 
 # configure gemini model using API key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# set local path of tesseract OCR engine
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# windows requires manual tesseract path
+# render docker uses linux global installation
+
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
 def preprocess_image(img):

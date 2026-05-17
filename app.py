@@ -15,6 +15,13 @@ import time
 from extractor import extract_text_from_file, extract_structured_data
 from excel_writer import fill_excel
 
+# cache OCR result so same file is not processed repeatedly
+# this improves speed during reruns in streamlit
+
+@st.cache_data
+def cached_extract_text(file):
+    return extract_text_from_file(file)
+
 # configuring streamlit page
 # wide layout makes dashboard look cleaner and more professional
 
@@ -130,7 +137,7 @@ if uploaded_file:
     # OCR step
     # image or pdf gets converted into raw text
 
-    text = extract_text_from_file(uploaded_file)
+    text = cached_extract_text(uploaded_file)
 
     # second stage
 
