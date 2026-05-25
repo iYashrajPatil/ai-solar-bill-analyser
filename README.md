@@ -4,6 +4,12 @@ An AI powered system that extracts data from electricity bills and generates a s
 
 ---
 
+## Deployed Link: 
+```
+https://ai-solar-bill-analyser.onrender.com/
+```
+---
+
 ## Overview
 
 This project automates the process of reading electricity bills and converting them into structured data for solar capacity estimation.
